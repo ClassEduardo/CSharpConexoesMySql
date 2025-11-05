@@ -1,0 +1,16 @@
+# --- Diversos ---
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+out/
+dist/
+publish/
+app.publish/
+/.vs
+obj/
+bin/
+TestResults/
+coverage_report/
+appsettings.*.json
+launchSettings.json
