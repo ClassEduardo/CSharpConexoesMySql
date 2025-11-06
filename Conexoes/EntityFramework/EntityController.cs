@@ -4,7 +4,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ConexoesMySql.Conexoes.EntityFramework;
-public class EntityController(AppDbContext _context) : ControllerBase
+[ApiController]
+[Route("api/entityFrameworkControlle")]
+public class EntityController(IRepositoryBase<Aluno> repository) : ControllerBase
 {
-    private readonly AppDbContext context = _context;
+    private readonly IRepositoryBase<Aluno> _repository = repository;
+
+    [HttpGet]
+    public async Task<IActionResult>? GetAlunoByNomeAsync([FromQuery] string nome)
+    {
+        var aluno = await _repository.FindAsync(a => a.Nome == nome);
+        return Ok(aluno);
+    }
 }
