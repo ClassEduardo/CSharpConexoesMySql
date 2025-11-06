@@ -21,6 +21,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             {
                 entity.ToTable("Alunos");
                 entity.HasKey(a => a.IdAluno);
+                entity.Property(a => a.IdAluno).HasColumnName("Id");
                 entity.Property(a => a.Nome).IsRequired().HasMaxLength(3);
                 entity.Property(a => a.Email).IsRequired().HasMaxLength(255);
 
@@ -28,10 +29,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                     Mapeamento Fluent API no DbContext
                     entity.HasOne(a => a.Turma).WithMany().HasForeignKey(a => a.TurmaId);
                 */
+                entity.HasOne(a => a.Turma)
+                          .WithMany()
+                          .HasForeignKey(a => a.TurmaId);
             });
 
-        modelBuilder.Entity<Turma>()
-            .ToTable("Turma")
-            .HasIndex(t => t.Id);
+        modelBuilder.Entity<Turma>(entity =>
+        {
+            entity.ToTable("Turma");
+            entity.HasKey(t => t.Id);
+        });
     }
 }

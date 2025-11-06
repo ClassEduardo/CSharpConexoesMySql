@@ -14,7 +14,7 @@ public interface IRepositoryBase<T> where T : class
 
     //Recebe um predicate do tipo Expression<Func<T, bool>>
     //Retorna um T
-    Task<T>? FindAsync(Expression<Func<T, bool>> predicate);
+    Task<T>? FindAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes);
 
     //Recebe um generico T
     //Retorna uma promisse Task e dps um tipo T

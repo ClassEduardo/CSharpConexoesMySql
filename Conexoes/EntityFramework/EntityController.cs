@@ -13,7 +13,7 @@ public class EntityController(IRepositoryBase<Aluno> repository) : ControllerBas
     [HttpGet]
     public async Task<IActionResult>? GetAlunoByNomeAsync([FromQuery] string nome)
     {
-        var aluno = await _repository.FindAsync(a => a.Nome == nome);
+        var aluno = await _repository.FindAsync(a => a.Nome == nome, a => a.Turma);
         return Ok(aluno);
     }
 }

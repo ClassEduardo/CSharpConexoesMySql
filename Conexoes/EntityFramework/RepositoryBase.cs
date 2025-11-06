@@ -7,17 +7,20 @@ namespace ConexoesMySql.Conexoes.EntityFramework;
 public class RepositoryBase<T>(AppDbContext context) : IRepositoryBase<T> where T : class
 {
     protected readonly AppDbContext _context = context;
-    protected readonly DbSet<T> _DbSet = context.Set<T>();
+    protected readonly DbSet<T> _dbSet = context.Set<T>();
 
-
-    // .net ve que precisa cria um AppDbContext
-    // Olha pro constructor "Preciso do DbContextOptions<AppDbContext>"
-    //Busca no container
-    //Cria o AppDbContext passando as configs de program e da própria classe AppDbContext
-    //Injeta no controller
-    public virtual async Task<T>? FindAsync(Expression<Func<T, bool>> predicate)
+    public virtual async Task<T>? FindAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
     {
-        return await _DbSet.FirstOrDefaultAsync(predicate);
+        IQueryable<T> query = _dbSet;
+
+        foreach (var include in includes)
+        {
+            query = query.Include(include);
+        }
+
+        return await query
+            .Where(predicate)
+            .FirstOrDefaultAsync();
     }
 
     public Task<T> AddAsync(T entity)

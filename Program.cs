@@ -10,27 +10,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
-var app = builder.Build();
-app.MapControllers();
-
 var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
 
 // Registrar o contexto no container de injeções do .net
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    // .NET CORE guarda essas config de acesso ao banco
-    // Elas esperam alguém pedir um AddDbContext
-    // As opções ficam associadas ao tipo AddDbContext 
     options.UseMySql(
         connectionString,
         ServerVersion.AutoDetect(connectionString),
         mySqlOptions =>
         {
             mySqlOptions.EnableRetryOnFailure(
-                    maxRetryCount: 3,
-                    maxRetryDelay: TimeSpan.FromSeconds(5),
-                    errorNumbersToAdd: null
-                );
+                maxRetryCount: 3,
+                maxRetryDelay: TimeSpan.FromSeconds(5),
+                errorNumbersToAdd: null
+            );
         }
     );
 
@@ -39,6 +33,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+
+var app = builder.Build();
+
+app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {

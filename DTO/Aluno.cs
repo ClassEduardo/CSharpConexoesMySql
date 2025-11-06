@@ -4,13 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ConexoesMySql.DTO;
 public class Aluno
 {
-    [Key]
-    [Column("Id")]
-    public string? IdAluno { get; set; }
+    public int IdAluno { get; set; }
     public string? Nome { get; set; }
     public int Idade { get; set; }
     public string? Email { get; set; }
     public char Genero { get; set; }
-    public int TurmaId { get; set; }
+    public int? TurmaId { get; set; }
     public Turma? Turma { get; set; }  // Propriedade de navegação
 }
