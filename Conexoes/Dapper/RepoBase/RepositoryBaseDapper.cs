@@ -19,15 +19,13 @@ public class RepositoryBaseDapper<T>(IDbConnectionFactory connectionFactory, str
     public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
         using var connection = CreateConnection();
-        return await connection.QueryAsync<T>($"SELECT * FROM @tableName", new { _tableName, _keyColumn });
+        return await connection.QueryAsync<T>($"SELECT * FROM {_tableName}");
     }
 
     public virtual async Task<T?> GetByIdAsync(object id)
     {
-        if (!IsValidIdentifier(_tableName) || !IsValidIdentifier(_keyColumn))
-            throw new ArgumentException("Invalid table or column name");
-
         using var connection = CreateConnection();
+
         var sql = $"SELECT * FROM {_tableName} WHERE {_keyColumn} = @Id";
         return await connection.QueryFirstOrDefaultAsync<T>(sql, new { Id = id });
     }
@@ -68,10 +66,5 @@ public class RepositoryBaseDapper<T>(IDbConnectionFactory connectionFactory, str
             $"DELETE FROM {_tableName} WHERE {_keyColumn} = @Id",
             new { Id = id }
         );
-    }
-
-    private static bool IsValidIdentifier(string name)
-    {
-        return Regex.IsMatch(name, @"^[A-Za-z0-9_]+$");
     }
 }

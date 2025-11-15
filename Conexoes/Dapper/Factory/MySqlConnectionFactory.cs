@@ -9,7 +9,7 @@ namespace ConexoesMySql.Conexoes.Dapper.Factory;
 
 public class MySqlConnectionFactory(IConfiguration configuration) : IDbConnectionFactory
 {
-    private readonly string _connectionString = configuration.GetConnectionString("ConnectionStrings")
+    private readonly string _connectionString = configuration.GetConnectionString("MySqlConnection")
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' não encontrada");
 
     public IDbConnection CreateConnection()

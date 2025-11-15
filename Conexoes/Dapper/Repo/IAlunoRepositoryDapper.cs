@@ -10,5 +10,5 @@ namespace ConexoesMySql.Conexoes.Dapper.Repo;
 public interface IAlunoRepositoryDapper : IRepositoryBaseDapper<Aluno>
 {
     Task<IEnumerable<Aluno?>> GetByTurmaIdAsync(int turmaId);
-    Task<Aluno?> GetAlunoComTurmaAsync(string id);
+    Task<Aluno?> GetAlunoComTurmaAsync(int id);
 }

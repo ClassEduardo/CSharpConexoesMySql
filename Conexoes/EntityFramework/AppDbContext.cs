@@ -20,8 +20,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         modelBuilder.Entity<Aluno>(entity =>
             {
                 entity.ToTable("Alunos");
-                entity.HasKey(a => a.IdAluno);
-                entity.Property(a => a.IdAluno).HasColumnName("Id");
+                entity.HasKey(a => a.Id);
                 entity.Property(a => a.Nome).IsRequired().HasMaxLength(3);
                 entity.Property(a => a.Email).IsRequired().HasMaxLength(255);
 

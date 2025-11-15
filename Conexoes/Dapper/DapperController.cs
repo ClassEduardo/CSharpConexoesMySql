@@ -23,17 +23,17 @@ public class DapperController(IRepositoryBaseDapper<Turma> _repositoryBaseTurma,
         return Ok(turmas);
     }
 
-    [HttpGet("/AlunoById")]
+    [HttpGet("AlunoById")]
     public async Task<IActionResult> GetAll([FromQuery] int alunoId)
     {
         var aluno = await repositoryAlunoBase.GetByIdAsync(alunoId); 
         return Ok(aluno);
     }
 
-    [HttpGet("/AlunoAndTurma")]
+    [HttpGet("AlunoAndTurma")]
     public async Task<IActionResult> GetAllAlunoAndTurma([FromQuery] int turmaId)
     {
-        var turmas = await repositoryAlunoBase.GetByTurmaIdAsync(turmaId); 
+        var turmas = await repositoryAlunoBase.GetAlunoComTurmaAsync(turmaId); 
         return Ok(turmas);
     }
 }

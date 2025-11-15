@@ -10,23 +10,26 @@ using Dapper;
 namespace ConexoesMySql.Conexoes.Dapper.Repo;
 
 public class AlunoRepositoryDapper(
-    IDbConnectionFactory connectionFactory,
-    string tableName
+        IDbConnectionFactory connectionFactory,
+        string tableName = "Alunos"
     ) : RepositoryBaseDapper<Aluno>(connectionFactory, tableName), IAlunoRepositoryDapper
 {
     private readonly IDbConnectionFactory _connectionFactory = connectionFactory;
 
-    public async Task<Aluno?> GetAlunoComTurmaAsync(string id)
+    public async Task<Aluno?> GetAlunoComTurmaAsync(int id)
     {
         using var connection = CreateConnection();
 
-        var sql = @"SELECT a.*, t.*
-                    FROM Aluno a
-                    INNER JOIN Turma t ON a.TurmaId = this.Id
-                    WHERE a.Id = @Id";
-        
+        var sql = @"SELECT 
+                        a.*, 
+                        t.*
+                    FROM Alunos a
+                    INNER JOIN Turma t
+                    ON a.TurmaId = t.Id
+                    WHERE a.Id = @id";
+
         var result = await connection.QueryAsync<Aluno, Turma, Aluno>(
-            sql, 
+            sql,
             (aluno, turma) =>
             {
                 aluno.Turma = turma;
@@ -43,8 +46,8 @@ public class AlunoRepositoryDapper(
     {
         using var connection = CreateConnection();
         return await connection.QueryAsync<Aluno>(
-            $"SELECT * FROM Aluno WHERE TurmaId = @TurmaId",
-            new{TurmaId = turmaId}
+            $"SELECT * FROM Alunos WHERE TurmaId = @TurmaId",
+            new { TurmaId = turmaId }
         );
     }
 
