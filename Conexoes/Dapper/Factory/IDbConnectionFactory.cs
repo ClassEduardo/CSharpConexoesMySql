@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConexoesMySql.Conexoes.Dapper;
+namespace ConexoesMySql.Conexoes.Dapper.Factory;
 
 public interface IDbConnectionFactory
 {

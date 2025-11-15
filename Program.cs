@@ -1,4 +1,9 @@
+using System.Data;
+using ConexoesMySql.Conexoes.Dapper.Factory;
+using ConexoesMySql.Conexoes.Dapper.Repo;
+using ConexoesMySql.Conexoes.Dapper.RepoBase;
 using ConexoesMySql.Conexoes.EntityFramework;
+using ConexoesMySql.DTO;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +17,7 @@ builder.Services.AddControllers();
 
 var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
 
+//   <--- IMPLEMENTAÇÃO ENTITY FRAMEWORK --->
 // Registrar o contexto no container de injeções do .net
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -31,12 +37,23 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.EnableSensitiveDataLogging();
     options.EnableDetailedErrors();
 });
-
 builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
+
+//   <--- IMPLEMENTAÇÃO DAPPER --->
+builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
+
+builder.Services.AddScoped<IRepositoryBaseDapper<Turma>>(provider =>
+{
+    var factory = provider.GetRequiredService<IDbConnectionFactory>();
+    return new RepositoryBaseDapper<Turma>(factory, "Turma");
+});
+
+builder.Services.AddScoped<IAlunoRepositoryDapper, AlunoRepositoryDapper>();
 
 var app = builder.Build();
 
 app.MapControllers();
+
 
 if (app.Environment.IsDevelopment())
 {
