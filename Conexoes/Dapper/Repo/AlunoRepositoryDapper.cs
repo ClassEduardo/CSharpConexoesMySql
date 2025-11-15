@@ -14,8 +14,6 @@ public class AlunoRepositoryDapper(
         string tableName = "Alunos"
     ) : RepositoryBaseDapper<Aluno>(connectionFactory, tableName), IAlunoRepositoryDapper
 {
-    private readonly IDbConnectionFactory _connectionFactory = connectionFactory;
-
     public async Task<Aluno?> GetAlunoComTurmaAsync(int id)
     {
         using var connection = CreateConnection();
