@@ -3,14 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConexoesMySql.Conexoes.EntityFramework;
 
-// Declaração de método e classe na mesma declaração 
-// Cada DbContext é como se fosse um banco de dados diferente
-
-// Contexto espera receber as opções no construtor
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    //Contrutor diz "Quando alguém me criar AppDbContext
-    // Preciso dessas configs"
     public DbSet<Aluno> Aluno { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

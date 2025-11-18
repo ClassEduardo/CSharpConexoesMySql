@@ -3,43 +3,94 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ConexoesMySql.Conexoes.EntityFramework;
 
-// Quando contexto é solicitado toda config feita entre program e AppDbContext
 public class RepositoryBase<T>(AppDbContext context) : IRepositoryBase<T> where T : class
 {
     protected readonly AppDbContext _context = context;
     protected readonly DbSet<T> _dbSet = context.Set<T>();
 
+    public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? predicate)
+    {
+        try
+        {
+            IQueryable<T> query = _dbSet;
+
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+
+            return await query.ToListAsync();
+        }
+        catch (System.Exception ex)
+        {
+            throw new Exception($"Erro ao buscar {ex.Message}", ex);
+        }
+    }
+
     public virtual async Task<T>? FindAsync(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includes)
     {
-        IQueryable<T> query = _dbSet;
-
-        foreach (var include in includes)
+        try
         {
-            query = query.Include(include);
+            IQueryable<T> query = _dbSet;
+
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query
+                .Where(predicate)
+                .FirstOrDefaultAsync() ?? throw new Exception("Falha ao obter o registro.");
         }
-
-        return await query
-            .Where(predicate)
-            .FirstOrDefaultAsync();
+        catch (System.Exception ex)
+        {
+            throw new Exception($"Erro ao buscar registro: {ex.Message}", ex);
+        }
     }
 
-    public Task<T> AddAsync(T entity)
+    public async Task<T> AddAsync(T entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _dbSet.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        catch (System.Exception ex)
+        {
+            throw new Exception($"Erro ao adicionar registro: {ex.Message}", ex);
+        }
     }
 
-    public Task<bool> DeleteAsync(int id)
+    public async Task<T> UpdateAsync(T entity)
     {
-        throw new NotImplementedException();
+        try
+        {
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+        catch (System.Exception ex)
+        {
+            throw new Exception($"Erro ao atualizar registro: {ex.Message}", ex);
+        }
     }
 
-    public Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? predicate)
+    public async Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
-    }
+        try
+        {
+            var entity = await _dbSet.FindAsync(id);
 
-    public Task<T> UpdateAsync(T entity)
-    {
-        throw new NotImplementedException();
+            if(entity == null) return false;
+
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            throw new Exception($"Erro ao deletar registro: {ex.Message}", ex);
+        }
     }
 }
